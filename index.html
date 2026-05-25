@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 学习规划器 - 智能复习计划生成</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== 引导页（首次访问显示）===== -->
+  <div id="landingPage" class="landing-page">
+    <div class="landing-bg"></div>
+    <div class="landing-content">
+
+      <!-- Hero 区域 -->
+      <div class="hero-section">
+        <div class="hero-badge">🎯 高二学生专用</div>
+        <h1 class="hero-title">
+          <span class="hero-icon">⚡</span>
+          <span>AI 学习规划器</span>
+        </h1>
+        <p class="hero-subtitle">精准到时间段的智能复习计划 · 告别盲目刷题</p>
+
+        <!-- 核心卖点 -->
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <div class="feature-title">智能分配</div>
+            <div class="feature-desc">弱项多给时间，强项不浪费时间<br/>9科自动均衡排课</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🍅</div>
+            <div class="feature-title">番茄钟追踪</div>
+            <div class="feature-desc">每天自动生成25分钟番茄钟<br/>勾选完成，未完的明天提醒</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚠️</div>
+            <div class="feature-title">特别注意</div>
+            <div class="feature-desc">昨天没完成的任务<br/>自动滚入今天的计划表</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">真实作息</div>
+            <div class="feature-desc">按你的实际时间排计划<br/>早读/课间/晚自习全适配</div>
+          </div>
+        </div>
+
+        <button class="btn-hero" onclick="startUsing()">
+          🚀 立即开始规划
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="hero-note">完全免费 · 无需注册 · 数据保存在本地</p>
+      </div>
+
+      <!-- 使用流程 -->
+      <div class="how-it-works">
+        <h2 class="section-title">怎么用？3步搞定</h2>
+        <div class="steps-row">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-text"><strong>选考试日期</strong><br/>还有多少天？</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>设科目 + 权重</strong><br/>哪科弱就拉高权重</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-text"><strong>填你的作息时间</strong><br/>生成专属计划！</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部激励区 -->
+      <div class="landing-footer">
+        <div class="landing-motto">
+          <span class="motto-icon">🎯</span>
+          <span class="motto-text">每天进步一点点，量变引起质变</span>
+        </div>
+        <div class="landing-stats">
+          <div class="lstat-item">
+            <span class="lstat-num">9</span>
+            <span class="lstat-label">科智能分配</span>
+          </div>
+          <div class="lstat-item">
+            <span class="lstat-num">25</span>
+            <span class="lstat-label">分钟番茄钟</span>
+          </div>
+          <div class="lstat-item">
+            <span class="lstat-num">∞</span>
+            <span class="lstat-label">天免费使用</span>
+          </div>
+        </div>
+        <p class="landing-copy">Made with ⚡ by 航哥 · 2026</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== 主应用区域 ===== -->
+  <div id="mainApp" class="main-app" style="display:none;">
+
+    <!-- 顶部导航栏 -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">⚡ AI学习规划器</div>
+        <div class="header-actions">
+          <button class="header-btn" onclick="showLanding()" title="返回首页">🏠</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+
+    <!-- ===== 第一区域：输入考试信息 ===== -->
+    <section class="card" id="exam-setup">
+      <h2 class="card-title">📝 设置考试信息</h2>
+
+      <!-- 考试名称 -->
+      <div class="form-group">
+        <label>考试名称</label>
+        <input type="text" id="examName" placeholder="例如：期末考试、月考..." value="期末考试">
+      </div>
+
+      <!-- 考试日期 -->
+      <div class="form-group">
+        <label>考试日期</label>
+        <input type="date" id="examDate">
+      </div>
+
+      <!-- 科目管理区 -->
+      <div class="subjects-section">
+        <h3>📚 添加科目（点击添加，点 ✕ 删除）</h3>
+
+        <!-- 预设常用科目按钮 -->
+        <div class="preset-subjects">
+          <button class="tag-btn" onclick="addSubject('语文')">语文</button>
+          <button class="tag-btn" onclick="addSubject('数学')">数学</button>
+          <button class="tag-btn" onclick="addSubject('英语')">英语</button>
+          <button class="tag-btn" onclick="addSubject('物理')">物理</button>
+          <button class="tag-btn" onclick="addSubject('化学')">化学</button>
+          <button class="tag-btn" onclick="addSubject('生物')">生物</button>
+          <button class="tag-btn" onclick="addSubject('历史')">历史</button>
+          <button class="tag-btn" onclick="addSubject('地理')">地理</button>
+          <button class="tag-btn" onclick="addSubject('政治')">政治</button>
+          <button class="tag-btn" onclick="addSubject('其他')">+ 自定义</button>
+        </div>
+
+        <!-- 已选科目列表 -->
+        <div id="subjectList" class="subject-list"></div>
+      </div>
+
+      <!-- 科目权重设置（选了科目后显示） -->
+      <div id="weightsSection" style="display:none;">
+        <h3>⚖️ 各科难度/重要性（弱项拉高，强项调低）</h3>
+        <p class="weight-hint">💡 权重越高 → 分配到的自习时间越多。建议弱项设 1.5x~2x，强项设 0.5x~0.75x</p>
+        <div id="weightSliders"></div>
+      </div>
+
+      <!-- ===== 新增：作息时间段设置 ===== -->
+      <div id="scheduleSection" style="display:none;">
+        <h3>🕐 设置你的可用时间段（可调整每个时段的分钟数）</h3>
+        <p class="schedule-hint">💡 只填你**能自主安排**的时间（自习/课间/碎片），正课时间不用填</p>
+
+        <!-- 工作日时段（周一至周五） -->
+        <div class="schedule-block">
+          <div class="schedule-block-header">
+            <span class="schedule-icon">🏫</span>
+            <span class="schedule-block-title">周一至周五（工作日）</span>
+            <span class="schedule-badge">在校</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot morning"></span>早读前 / 早读</span>
+            <span class="slot-time-hint">6:00 - 7:30</span>
+            <input type="number" class="slot-input" id="wd_early" value="20" min="0" max="60" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot am"></span>上午课间 + 大课间</span>
+            <span class="slot-time-hint">8:00 - 12:00 课间</span>
+            <input type="number" class="slot-input" id="wd_morning_break" value="15" min="0" max="40" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot noon"></span>午休前（中午自习）</span>
+            <span class="slot-time-hint">12:00 - 14:00</span>
+            <input type="number" class="slot-input" id="wd_noon" value="30" min="0" max="60" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot pm"></span>下午课间</span>
+            <span class="slot-time-hint">14:00 - 18:00 课间</span>
+            <input type="number" class="slot-input" id="wd_afternoon_break" value="10" min="0" max="30" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot evening"></span>晚自习（第1-2节）</span>
+            <span class="slot-time-hint">19:00 - 21:00</span>
+            <input type="number" class="slot-input" id="wd_evening1" value="60" min="0" max="120" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot night"></span>晚自习后 / 回宿舍后</span>
+            <span class="slot-time-hint">22:00 之后</span>
+            <input type="number" class="slot-input" id="wd_night" value="20" min="0" max="60" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="slot-total">
+            工作日每天总计：<strong id="wdTotalMins">155</strong> 分钟
+            (<strong id="wdTotalHours">2.6</strong> 小时)
+          </div>
+        </div>
+
+        <!-- 周六时段 -->
+        <div class="schedule-block">
+          <div class="schedule-block-header">
+            <span class="schedule-icon">📅</span>
+            <span class="schedule-block-title">周六</span>
+            <span class="schedule-badge">半休</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot morning"></span>早晨</span>
+            <span class="slot-time-hint">6:30 - 8:00</span>
+            <input type="number" class="slot-input" id="sat_morning" value="30" min="0" max="90" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot am"></span>上午自习</span>
+            <span class="slot-time-hint">8:00 - 12:00</span>
+            <input type="number" class="slot-input" id="sat_am" value="50" min="0" max="120" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot pm"></span>下午</span>
+            <span class="slot-time-hint">14:00 - 18:00</span>
+            <input type="number" class="slot-input" id="sat_pm" value="40" min="0" max="120" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot evening"></span>晚上</span>
+            <span class="slot-time-hint">19:00 - 22:00</span>
+            <input type="number" class="slot-input" id="sat_evening" value="45" min="0" max="120" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="slot-total">
+            周六总计：<strong id="satTotalMins">165</strong> 分钟
+            (<strong id="satTotalHours">2.8</strong> 小时)
+          </div>
+        </div>
+
+        <!-- 周日时段（时间充裕版） -->
+        <div class="schedule-block">
+          <div class="schedule-block-header">
+            <span class="schedule-icon">🌟</span>
+            <span class="schedule-block-title">周日（休息日·时间充裕）</span>
+            <span class="schedule-badge weekend">充裕</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot morning"></span>早晨（背单词/晨读）</span>
+            <span class="slot-time-hint">7:00 - 9:00</span>
+            <input type="number" class="slot-input" id="sun_morning" value="45" min="0" max="120" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot am"></span>上午（黄金专注时段）</span>
+            <span class="slot-time-hint">9:00 - 12:00</span>
+            <input type="number" class="slot-input" id="sun_am" value="90" min="0" max="180" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot noon"></span>午休前后</span>
+            <span class="slot-time-hint">12:00 - 14:00</span>
+            <input type="number" class="slot-input" id="sun_noon" value="30" min="0" max="60" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot pm"></span>下午（大块时间）</span>
+            <span class="slot-time-hint">14:00 - 18:00</span>
+            <input type="number" class="slot-input" id="sun_pm" value="100" min="0" max="240" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="time-slot-row">
+            <span class="slot-label"><span class="slot-dot evening"></span>晚上（整理+预习）</span>
+            <span class="slot-time-hint">19:00 - 23:00</span>
+            <input type="number" class="slot-input" id="sun_evening" value="70" min="0" max="180" step="5">
+            <span class="slot-unit">分钟</span>
+          </div>
+
+          <div class="slot-total sun-total">
+            周日总计：<strong id="sunTotalMins">335</strong> 分钟
+            (<strong id="sunTotalHours">5.6</strong> 小时)
+          </div>
+        </div>
+      </div>
+
+      <!-- 生成按钮 -->
+      <button class="btn-primary" onclick="generatePlan()">🚀 生成精准复习计划</button>
+    </section>
+
+    <!-- ===== 第二区域：倒计时卡片 ===== -->
+    <section class="card countdown-card" id="countdownSection" style="display:none;">
+      <h2 class="card-title">⏰ 距离考试还有</h2>
+      <div class="countdown-grid">
+        <div class="countdown-item">
+          <span id="countDays" class="count-num">0</span>
+          <span class="count-label">天</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countHours" class="count-num">0</span>
+          <span class="count-label">小时</span>
+        </div>
+        <div class="countdown-item">
+          <span id="countMins" class="count-num">0</span>
+          <span class="count-label">分钟</span>
+        </div>
+      </div>
+      <p id="examNameDisplay" class="exam-name-display"></p>
+    </section>
+
+    <!-- ===== 第三区域：每日计划展示（精确到时段）===== -->
+    <section class="card plan-card" id="planSection" style="display:none;">
+      <h2 class="card-title">📅 你的精准复习计划</h2>
+
+      <!-- 今日任务高亮 -->
+      <div id="todayTask" class="today-highlight"></div>
+
+      <!-- 计划切换标签 -->
+      <div class="plan-tabs">
+        <button class="tab-btn active" onclick="switchPlanView('all')" id="tabAll">📋 全部天数</button>
+        <button class="tab-btn" onclick="switchPlanView('week')" id="tabWeek">📆 本周</button>
+        <button class="tab-btn" onclick="switchPlanView('today')" id="tabToday">🔥 今天</button>
+      </div>
+
+      <!-- 日历式计划列表 -->
+      <div id="planList" class="plan-list"></div>
+
+      <!-- 统计信息 -->
+      <div id="statsBar" class="stats-bar"></div>
+
+      <!-- 操作按钮 -->
+      <div class="action-buttons">
+        <button class="btn-secondary" onclick="exportPlan()">📋 复制计划到剪贴板</button>
+        <button class="btn-secondary" onclick="resetAll()">🔄 重新规划</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <span class="footer-logo">⚡ AI 学习规划器</span>
+        <p class="footer-desc">专为高中生设计的智能复习规划工具</p>
+      </div>
+      <div class="footer-links">
+        <a href="#" onclick="showLanding()">🏠 返回首页</a>
+        <a href="#" onclick="resetAll()">🔄 重新规划</a>
+      </div>
+    </div>
+    <p class="footer-copy">Made by 航哥 + 皮卡丘 ⚡ · 2026</p>
+  </footer>
+
+  </div><!-- end mainApp -->
+
+  <script src="app.js"></script>
+</body>
+</html>
